@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách đã upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f7;
+      margin: 0;
+      padding: 15px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .filter-container {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .filter-input {
+      padding: 10px;
+      width: 80%;
+      max-width: 300px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    .person-item {
+      border-bottom: 1px solid #eee;
+      padding: 15px 0;
+    }
+    .person-name {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #007aff;
+    }
+    .image-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .image-wrapper {
+      position: relative;
+    }
+    .uploaded-img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    .folder-tag {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 10px;
+      text-align: center;
+      padding: 2px;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Danh sách đã upload hình ảnh</h2>
+  
+  <div style="text-align: center; margin-bottom: 20px;">
+    <a href="/" style="color: #007aff; text-decoration: none; font-weight: bold;">← Quay lại trang Upload</a>
+  </div>
+
+  <div class="filter-container">
+    <input type="text" id="folderFilter" class="filter-input" placeholder="Lọc theo tên thư mục..." onkeyup="filterImages()">
+  </div>
+
+  <div id="list">
+    <% people.forEach(p => { %>
+      <% if (p.images && p.images.length > 0) { %>
+        <div class="person-item" data-images='<%= JSON.stringify(p.images) %>'>
+          <div class="person-name"><%= p.fullName %> (STT: <%= p.stt %>)</div>
+          <div class="image-list">
+            <% p.images.forEach(img => { %>
+              <div class="image-wrapper" data-folder="<%= img.folder %>">
+                <a href="<%= img.path %>" target="_blank">
+                  <img src="<%= img.path %>" class="uploaded-img" loading="lazy">
+                </a>
+                <div class="folder-tag"><%= img.folder %></div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+  function filterImages() {
+    const filter = document.getElementById('folderFilter').value.toLowerCase();
+    const people = document.querySelectorAll('.person-item');
+
+    people.forEach(person => {
+      const images = person.querySelectorAll('.image-wrapper');
+      let hasVisibleImage = false;
+
+      images.forEach(img => {
+        const folder = img.getAttribute('data-folder').toLowerCase();
+        if (folder.includes(filter) || filter === '') {
+          img.classList.remove('hidden');
+          hasVisibleImage = true;
+        } else {
+          img.classList.add('hidden');
+        }
+      });
+
+      if (hasVisibleImage) {
+        person.classList.remove('hidden');
+      } else {
+        person.classList.add('hidden');
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

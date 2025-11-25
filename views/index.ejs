@@ -147,21 +147,34 @@
 
       <div class="dropdown-list" id="dropdownList">
         <% people.forEach(p => { %>
-          <div class="dropdown-item" data-id="<%= p.id %>">
+          <div class="dropdown-item" data-id="<%= p.id %>" data-images='<%= JSON.stringify(p.images || []) %>'>
             <%= p.fullName %>
           </div>
         <% }) %>
       </div>
     </div>
 
+    <!-- EXISTING IMAGES -->
+    <div id="existingImages" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;"></div>
+
     <!-- FILE INPUT -->
     <input type="file" name="image" accept="image/*" capture="camera" required />
+
+    <!-- PRIMARY IMAGE CHECKBOX -->
+    <div style="margin-top: 15px; display: flex; align-items: center;">
+      <input type="checkbox" id="isPrimary" name="isPrimary" style="width: 20px; height: 20px; margin-right: 10px;">
+      <label for="isPrimary" style="font-size: 16px;">Dùng làm image chính</label>
+    </div>
 
     <!-- SUBMIT -->
     <button type="submit">Tải Lên</button>
   </form>
 
   <div id="result"></div>
+  
+  <div style="text-align: center; margin-top: 20px;">
+    <a href="/uploaded" style="color: #007aff; text-decoration: none; font-weight: bold;">Xem danh sách đã upload</a>
+  </div>
 </div>
 
 <script src="/script.js"></script>

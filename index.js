@@ -39,7 +39,13 @@ const storage = multer.diskStorage({
 
     if (!selected) return cb(new Error("Invalid person"));
 
-    const fileName = `${selected.id}.${selected.fullName}.png`;
+    // Calculate index based on existing images
+    let index = 1;
+    if (selected.images && selected.images.length > 0) {
+      index = selected.images.length + 1;
+    }
+
+    const fileName = `${selected.id}.${selected.fullName}.${index}.png`;
     cb(null, fileName);
   },
 });
@@ -48,10 +54,69 @@ const upload = multer({ storage });
 
 // HANDLE UPLOAD
 app.post("/upload", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  const personId = req.body.person;
+  const folder = req.body.folder || "default";
+  const isPrimary = req.body.isPrimary === "on" || req.body.isPrimary === "true";
+  const filePath = `/public/${folder}/${req.file.filename}`;
+
+  // 1. Update data.json file
+  const dataPath = path.join(__dirname, "data.json");
+  let rawData = fs.readFileSync(dataPath, "utf8");
+  let jsonData = JSON.parse(rawData);
+
+  const personIndex = jsonData.findIndex((p) => p.stt.toString() === personId.toString());
+
+  if (personIndex !== -1) {
+    if (!jsonData[personIndex].images) {
+      jsonData[personIndex].images = [];
+    }
+
+    // If new image is primary, unset primary for others
+    if (isPrimary) {
+      jsonData[personIndex].images.forEach(img => img.isPrimary = false);
+    }
+
+    // Store object with path, folder, and isPrimary
+    jsonData[personIndex].images.push({
+      path: filePath.replace("/public", ""),
+      folder: folder,
+      isPrimary: isPrimary
+    });
+
+    fs.writeFileSync(dataPath, JSON.stringify(jsonData, null, 2), "utf8");
+
+    // 2. Update in-memory 'people' variable
+    const memoryPerson = people.find((p) => p.id.toString() === personId.toString());
+    if (memoryPerson) {
+      if (!memoryPerson.images) {
+        memoryPerson.images = [];
+      }
+      
+      if (isPrimary) {
+        memoryPerson.images.forEach(img => img.isPrimary = false);
+      }
+
+      memoryPerson.images.push({
+        path: filePath.replace("/public", ""),
+        folder: folder,
+        isPrimary: isPrimary
+      });
+    }
+  }
+
   return res.json({
     message: "Upload thành công!",
-    filePath: `/public/${req.body.folder}/${req.file.filename}`,
+    filePath: filePath,
   });
+});
+
+// VIEW UPLOADED IMAGES
+app.get("/uploaded", (req, res) => {
+  res.render("uploaded", { people });
 });
 
 // START SERVER
