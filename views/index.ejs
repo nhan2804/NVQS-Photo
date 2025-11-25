@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upload Ảnh</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f7;
+      margin: 0;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      max-width: 600px;
+      margin: auto;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+      color: #333;
+      font-weight: 600;
+    }
+
+    /* DROPDOWN SEARCHABLE */
+    .dropdown-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .dropdown-input {
+      width: 100%;
+      padding: 14px 12px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      background: #fafafa;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .dropdown-input:focus {
+      border-color: #007aff;
+      background: white;
+    }
+
+    .dropdown-list {
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      max-height: 220px;
+      overflow-y: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      display: none;
+      z-index: 99;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-item {
+      padding: 14px 12px;
+      font-size: 16px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+      background: #f3f3f3;
+    }
+
+    /* CAMERA + BUTTON */
+    #camera {
+      width: 100%;
+      border-radius: 12px;
+      background: black;
+    }
+
+    #preview {
+      width: 100%;
+      margin-top: 15px;
+      border-radius: 12px;
+      display: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #007aff;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 15px;
+    }
+
+    button:active {
+      transform: scale(0.97);
+      background: #0063d6;
+    }
+
+    #result {
+      margin-top: 15px;
+      text-align: center;
+      color: #0a8a00;
+      font-weight: bold;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Upload Ảnh</h2>
+
+  <form id="uploadForm">
+    <input type="hidden" name="folder" value="<%= folder %>">
+
+    <!-- SEARCHABLE DROPDOWN -->
+    <div class="dropdown-container">
+      <input
+        type="text"
+        id="dropdownInput"
+        class="dropdown-input"
+        placeholder="Chọn người..."
+        autocomplete="off"
+      >
+      <input type="hidden" name="person" id="selectedPerson">
+
+      <div class="dropdown-list" id="dropdownList">
+        <% people.forEach(p => { %>
+          <div class="dropdown-item" data-id="<%= p.id %>">
+            <%= p.fullName %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- FILE INPUT -->
+    <input type="file" name="image" accept="image/*" capture="camera" required />
+
+    <!-- SUBMIT -->
+    <button type="submit">Tải Lên</button>
+  </form>
+
+  <div id="result"></div>
+</div>
+
+<script src="/script.js"></script>
+</body>
+</html>
