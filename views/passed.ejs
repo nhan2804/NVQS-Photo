@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách trúng tuyển</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f7;
+      margin: 0;
+      padding: 15px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007aff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Danh sách thanh niên trúng tuyển</h2>
+  
+  <a href="/" class="back-link">← Quay lại trang Upload</a>
+
+  <table>
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Ngày sinh</th>
+        <th>Họ và tên</th>
+        <th>Thôn</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (passedPeople.length > 0) { %>
+        <% passedPeople.forEach(p => { %>
+          <tr>
+            <td><%= p.stt %></td>
+            <td><%= p.birthDate %></td>
+            <td><%= p.fullName %></td>
+            <td><%= p.village %></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="4" style="text-align: center;">Chưa có dữ liệu</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

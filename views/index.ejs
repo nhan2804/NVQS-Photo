@@ -123,13 +123,32 @@
       font-weight: bold;
       font-size: 16px;
     }
+    .nav-links {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    .nav-links a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: #007aff;
+        font-weight: bold;
+    }
+    .nav-links a.active {
+        text-decoration: underline;
+        color: #0056b3;
+    }
   </style>
 </head>
 
 <body>
 
 <div class="card">
-  <h2>Upload Ảnh</h2>
+  <div class="nav-links">
+      <a href="/?folder=default" class="<%= folder === 'default' ? 'active' : '' %>">Mặc định</a>
+      <a href="/?folder=PASSED" class="<%= folder === 'PASSED' ? 'active' : '' %>">Trúng tuyển</a>
+      <a href="/?folder=NVCA" class="<%= folder === 'NVCA' ? 'active' : '' %>">Nghĩa vụ công an</a>
+  </div>
+  <h2>Upload Ảnh - <%= pageTitle %></h2>
 
   <form id="uploadForm">
     <input type="hidden" name="folder" value="<%= folder %>">
@@ -148,7 +167,7 @@
       <div class="dropdown-list" id="dropdownList">
         <% people.forEach(p => { %>
           <div class="dropdown-item" data-id="<%= p.id %>" data-images='<%= JSON.stringify(p.images || []) %>'>
-            <%= p.fullName %>
+            <%= p.id %>.<%= p.fullName %> - <%= p.village %> <%= p.date %>/11
           </div>
         <% }) %>
       </div>
@@ -174,6 +193,8 @@
   
   <div style="text-align: center; margin-top: 20px;">
     <a href="/uploaded" style="color: #007aff; text-decoration: none; font-weight: bold;">Xem danh sách đã upload</a>
+    <br><br>
+    <a href="/passed" style="color: #28a745; text-decoration: none; font-weight: bold;">Xem danh sách trúng tuyển</a>
   </div>
 </div>
 

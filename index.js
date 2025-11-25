@@ -13,8 +13,12 @@ people = people.map((p, index) => ({ id: p.stt, ...p }));
 
 // RENDER UI
 app.get("/", (req, res) => {
-  const folder = req.query.folder || "";
-  res.render("index", { people, folder });
+  const folder = req.query.folder || "default";
+  let pageTitle = "Mặc định";
+  if (folder === "PASSED") pageTitle = "Trúng tuyển";
+  if (folder === "NVCA") pageTitle = "Nghĩa vụ công an";
+
+  res.render("index", { people, folder, pageTitle });
 });
 
 // MULTER CONFIG (Dynamic folder)
@@ -119,5 +123,14 @@ app.get("/uploaded", (req, res) => {
   res.render("uploaded", { people });
 });
 
+// VIEW PASSED LIST
+app.get("/passed", (req, res) => {
+  const passedPeople = people.filter(p => 
+    p.images && p.images.some(img => img.folder === "PASSED")
+  );
+  res.render("passed", { passedPeople });
+});
+
 // START SERVER
-app.listen(3000, () => console.log("Server running at http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

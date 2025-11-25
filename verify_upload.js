@@ -10,7 +10,11 @@ const backupPath = path.join(__dirname, 'data.json.bak');
 fs.copyFileSync(dataPath, backupPath);
 
 // Start server
-const serverProcess = spawn('node', ['index.js'], { stdio: 'pipe', cwd: __dirname });
+const serverProcess = spawn('node', ['index.js'], { 
+    stdio: 'pipe', 
+    cwd: __dirname,
+    env: { ...process.env, PORT: '3001' }
+});
 
 let serverOutput = '';
 serverProcess.stdout.on('data', (data) => {
@@ -58,7 +62,7 @@ function runTest() {
 
     const options = {
         hostname: 'localhost',
-        port: 3000,
+        port: 3001,
         path: '/upload',
         method: 'POST',
         headers: {
@@ -103,7 +107,7 @@ function runTest() {
             }
 
             // Check index page for data-images and link
-            http.get('http://localhost:3000/', (res) => {
+            http.get('http://localhost:3001/', (res) => {
                 let html = '';
                 res.on('data', (chunk) => html += chunk);
                 res.on('end', () => {
@@ -120,7 +124,7 @@ function runTest() {
                     }
 
                     // Check uploaded page for link
-                    http.get('http://localhost:3000/uploaded', (res) => {
+                    http.get('http://localhost:3001/uploaded', (res) => {
                         let uploadedHtml = '';
                         res.on('data', (chunk) => uploadedHtml += chunk);
                         res.on('end', () => {
@@ -130,14 +134,51 @@ function runTest() {
                                 console.error('Verification FAILED: Uploaded page missing link to /');
                             }
 
-                            // Cleanup and Restore
-                            serverProcess.kill();
-                            
-                            // Restore data.json
-                            fs.copyFileSync(backupPath, dataPath);
-                            fs.unlinkSync(backupPath);
-                            
-                            process.exit(0);
+                            // Check passed page
+                            http.get('http://localhost:3001/passed', (res) => {
+                                let passedHtml = '';
+                                res.on('data', (chunk) => passedHtml += chunk);
+                                res.on('end', () => {
+                                    if (res.statusCode === 200) {
+                                        console.log('Verification SUCCESS: /passed page is accessible');
+                                    } else {
+                                        console.error('Verification FAILED: /passed page returned status', res.statusCode);
+                                    }
+
+                                    // Check folder navigation titles
+                                    const checkTitle = (url, expectedTitle) => {
+                                        return new Promise((resolve) => {
+                                            http.get(url, (res) => {
+                                                let html = '';
+                                                res.on('data', (chunk) => html += chunk);
+                                                res.on('end', () => {
+                                                    if (html.includes(expectedTitle)) {
+                                                        console.log(`Verification SUCCESS: ${url} contains title "${expectedTitle}"`);
+                                                    } else {
+                                                        console.error(`Verification FAILED: ${url} missing title "${expectedTitle}"`);
+                                                    }
+                                                    resolve();
+                                                });
+                                            });
+                                        });
+                                    };
+
+                                    Promise.all([
+                                        checkTitle('http://localhost:3001/?folder=PASSED', 'Upload Ảnh - Trúng tuyển'),
+                                        checkTitle('http://localhost:3001/?folder=NVCA', 'Upload Ảnh - Nghĩa vụ công an'),
+                                        checkTitle('http://localhost:3001/?folder=default', 'Upload Ảnh - Mặc định')
+                                    ]).then(() => {
+                                        // Cleanup and Restore
+                                        serverProcess.kill();
+                                        
+                                        // Restore data.json
+                                        fs.copyFileSync(backupPath, dataPath);
+                                        fs.unlinkSync(backupPath);
+                                        
+                                        process.exit(0);
+                                    });
+                                });
+                            });
                         });
                     });
                 });
