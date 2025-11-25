@@ -105,29 +105,7 @@
     "mother": "Nguyễn Thị Phương - 1970 - Làm nông",
     "wife": null,
     "note": 1010,
-    "type": "DS12",
-    "images": [
-      {
-        "path": "/default/4.Ninh Quốc Bảo.png",
-        "folder": "default",
-        "isPrimary": false
-      },
-      {
-        "path": "/NVCA/4.Ninh Quốc Bảo.2.png",
-        "folder": "NVCA",
-        "isPrimary": false
-      },
-      {
-        "path": "/NVCA/4.Ninh Quốc Bảo.3.png",
-        "folder": "NVCA",
-        "isPrimary": false
-      },
-      {
-        "path": "/NVCA/4.Ninh Quốc Bảo.4.png",
-        "folder": "NVCA",
-        "isPrimary": true
-      }
-    ]
+    "type": "DS12"
   },
   {
     "stt": 5,

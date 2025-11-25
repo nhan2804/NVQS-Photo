@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folder = req.body.folder || "default"; // fallback nếu không có
-    const dir = path.join(__dirname, "public", folder);
+    const dir = path.join(__dirname, "public", "uploaded", folder);
 
     // Tạo thư mục nếu chưa tồn tại
     if (!fs.existsSync(dir)) {
@@ -61,7 +61,7 @@ app.post("/upload", upload.single("image"), (req, res) => {
   const personId = req.body.person;
   const folder = req.body.folder || "default";
   const isPrimary = req.body.isPrimary === "on" || req.body.isPrimary === "true";
-  const filePath = `/public/${folder}/${req.file.filename}`;
+  const filePath = `/public/uploaded/${folder}/${req.file.filename}`;
 
   // 1. Update data.json file
   const dataPath = path.join(__dirname, "data.json");
